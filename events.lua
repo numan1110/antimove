@@ -9,12 +9,10 @@ local MenuIDs = {
 local moduleMenuItemID = 0
 
 -- Whitelist of unique identifiers, of people allowed to move you (so no move back to the last channel)
-local whitelist={}
-whitelist = antimove_whitelist
+local whitelist = antimove_whitelist
 
 -- Stores if the script should be working by default when loaded (true by default, so, working)
-local enabled=false
-enabled = antimove_enabled
+local enabled = antimove_enabled
 
 function antimove_toggle(serverConnectionHandlerID)
 	if enabled==true then
