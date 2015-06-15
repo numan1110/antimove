@@ -1,4 +1,4 @@
-require("anti-move/settings")
+require("antimove/settings")
 
 local MenuIDs = {
 	MENU_ID_GLOBAL_1 = 1
