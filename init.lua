@@ -10,7 +10,7 @@ local function createMenus(moduleMenuItemID)
 	antimove_events.moduleMenuItemID = moduleMenuItemID
 	return {
 		{ts3defs.PluginMenuType.PLUGIN_MENU_TYPE_GLOBAL, antimove_events.MenuIDs.MENU_ID_GLOBAL_1, "Toggle Anti-Move", ""}
-		}
+	}
 end
 
 local MODULE_NAME = "anti-move"
