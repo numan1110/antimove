@@ -1,5 +1,5 @@
 # antimove
-Auto return to the last channel with a TeamSpeak3 lua plugin after being moved or kicked from a channel.
+Auto return to the last channel with a TeamSpeak3 lua plugin after being moved or kicked from a channel. Whitelist support to allow people to move or kick you from a channel.
 
 # Settings
 
