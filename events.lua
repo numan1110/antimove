@@ -40,12 +40,7 @@ local function onMenuItemEvent(serverConnectionHandlerID, menuType, menuItemID, 
 	end
 end
 
---local function onClientMoveEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moveMessage)
---	ts3.printMessageToCurrentTab(serverConnectionHandlerID.." -- "..clientID.." -- "..oldChannelID.." -- "..newChannelID.." -- "..visibility.." -- "..MoveMessage)
---end
-
-local function onClientMoveMovedEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moverID, moverName, moverUniqueIdentifier, moveMessage)
-	--ts3.printMessageToCurrentTab(serverConnectionHandlerID .. " -- " .. clientID .. " -- " .. oldChannelID .. " -- " .. newChannelID .. " -- " .. visibility .. " -- " .. moverID .. " -- " .. moverName .. " -- " .. moverUniqueIdentifier .. " -- " .. moveMessage)
+local function returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier)
 	local myClientID, error = ts3.getClientID(serverConnectionHandlerID)
 	if error ~= ts3errors.ERROR_ok then
 		print("Error getting own client ID: " .. error)
@@ -66,7 +61,7 @@ local function onClientMoveMovedEvent(serverConnectionHandlerID, clientID, oldCh
 		if #whitelist>0 then
 			for i=1, #whitelist do
 				if moverUniqueIdentifier == whitelist[i] then
-					ts3.printMessageToCurrentTab("Anti-move: Whitelisted mover unique identifier")
+					ts3.printMessageToCurrentTab("Anti-move: Whitelisted mover/kicker unique identifier")
 					return
 				end
 			end
@@ -75,10 +70,24 @@ local function onClientMoveMovedEvent(serverConnectionHandlerID, clientID, oldCh
 	end
 end
 
+--local function onClientMoveEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moveMessage)
+--	ts3.printMessageToCurrentTab(serverConnectionHandlerID.." -- "..clientID.." -- "..oldChannelID.." -- "..newChannelID.." -- "..visibility.." -- "..MoveMessage)
+--end
+
+local function onClientMoveMovedEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moverID, moverName, moverUniqueIdentifier, moveMessage)
+	--ts3.printMessageToCurrentTab(serverConnectionHandlerID .. " -- " .. clientID .. " -- " .. oldChannelID .. " -- " .. newChannelID .. " -- " .. visibility .. " -- " .. moverID .. " -- " .. moverName .. " -- " .. moverUniqueIdentifier .. " -- " .. moveMessage)
+	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier)
+end
+
+local function onClientKickFromChannelEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, kickerID, kickerName, kickerUniqueIdentifier, kickMessage)
+	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, kickerUniqueIdentifier)
+end
+
 antimove_events= {
 	MenuIDs = MenuIDs,
 	moduleMenuItemID = moduleMenuItemID,
 	["onMenuItemEvent"] = onMenuItemEvent,
 	--["onClientMoveEvent"] = onClientMoveEvent,
-	["onClientMoveMovedEvent"] = onClientMoveMovedEvent
+	["onClientMoveMovedEvent"] = onClientMoveMovedEvent,
+	["onClientKickFromChannelEvent"] = onClientKickFromChannelEvent
 }

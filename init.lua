@@ -10,7 +10,7 @@ local function createMenus(moduleMenuItemID)
 	antimove_events.moduleMenuItemID = moduleMenuItemID
 	return {
 		{ts3defs.PluginMenuType.PLUGIN_MENU_TYPE_GLOBAL, antimove_events.MenuIDs.MENU_ID_GLOBAL_1, "Toggle Anti-Move", ""}
-	}
+		}
 end
 
 local MODULE_NAME = "anti-move"
@@ -19,7 +19,8 @@ local registeredEvents = {
 	createMenus = createMenus,
 	--["onClientMoveEvent"] = antimove_events.onClientMoveEvent,
 	["onMenuItemEvent"] = antimove_events.onMenuItemEvent,
-	["onClientMoveMovedEvent"] = antimove_events.onClientMoveMovedEvent
+	["onClientMoveMovedEvent"] = antimove_events.onClientMoveMovedEvent,
+	["onClientKickFromChannelEvent"] = antimove_events.onClientKickFromChannelEvent
 }
 
 -- Will store factor to add to menuID to calculate the real menuID used in the TeamSpeak client (to support menus from multiple Lua modules)

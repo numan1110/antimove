@@ -1,5 +1,5 @@
-# anti-move
-Auto return to the last channel with a plugin for TeamSpeak3, writen in lua
+# antimove
+Auto return to the last channel with a TeamSpeak3 lua plugin after being moved or kicked from a channel.
 
 # Settings
 
