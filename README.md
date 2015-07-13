@@ -1,6 +1,12 @@
 # antimove
 Auto return to the last channel with a TeamSpeak3 lua plugin after being moved or kicked from a channel. Whitelist support to allow people to move or kick you from a channel.
 
+# Install
+```bash
+cd TEAMSPEAK/plugins/lua_plugins #T EAMSPEAK is your Teamspeak root folder.
+git clone https://github.com/fullinterest/antimove.git
+```
+
 # Settings
 
 The settings are included in the settings.lua file.
