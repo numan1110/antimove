@@ -22,7 +22,9 @@ The settings are included in the settings.lua file.
 Whitelist of unique identifiers, comma separated list like with the default example, of people allowed to move you (so no move back to the last channel)
 
 The server group whitelist have to be like this: 
-```antimove_servergroup_whitelist={["58VyjHBTkYCeGnUGN+Xe1s95M2o="]="1,2,3"}```
+```
+antimove_servergroup_whitelist={["58VyjHBTkYCeGnUGN+Xe1s95M2o="]="1,2,3"}
+```
 - You can get the server ID by clicking on Plugins \ Lua plugin \ Get Server Unique ID.
 - "1,2,3" are the server group ID (comma separated list) whitelisted in the server ID "58VyjHBTkYCeGnUGN+Xe1s95M2o="
 - You can add several servers, the main {} is comma separated list too, just don't forget to put the server ID in [] like in the example.
