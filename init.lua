@@ -9,7 +9,8 @@ local function createMenus(moduleMenuItemID)
 	-- Store value added to menuIDs to be able to calculate menuIDs for this module again for setPluginMenuEnabled (see demo.lua)
 	antimove_events.moduleMenuItemID = moduleMenuItemID
 	return {
-		{ts3defs.PluginMenuType.PLUGIN_MENU_TYPE_GLOBAL, antimove_events.MenuIDs.MENU_ID_GLOBAL_1, "Toggle Anti-Move", ""}
+		{ts3defs.PluginMenuType.PLUGIN_MENU_TYPE_GLOBAL, antimove_events.MenuIDs.MENU_ID_GLOBAL_1, "Toggle Anti-Move", ""},
+		{ts3defs.PluginMenuType.PLUGIN_MENU_TYPE_GLOBAL, antimove_events.MenuIDs.MENU_ID_GLOBAL_2, "Get Server Unique ID",""}
 		}
 end
 

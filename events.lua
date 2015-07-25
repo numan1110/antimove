@@ -1,7 +1,8 @@
 require("antimove/settings")
 
 local MenuIDs = {
-	MENU_ID_GLOBAL_1 = 1
+	MENU_ID_GLOBAL_1 = 1,
+	MENU_ID_GLOBAL_2 = 2
 }
 
 -- Will store factor to add to menuID to calculate the real menuID used in the TeamSpeak client (to support menus from multiple Lua modules)
@@ -10,12 +11,13 @@ local moduleMenuItemID = 0
 
 -- Whitelist of unique identifiers, of people allowed to move you (so no move back to the last channel)
 local whitelist = antimove_whitelist
+local servergroup_whitelist = antimove_servergroup_whitelist
 
 -- Stores if the script should be working by default when loaded (true by default, so, working)
 local enabled = antimove_enabled
 
 function antimove_toggle(serverConnectionHandlerID)
-	if enabled==true then
+	if enabled then
 		enabled=false
 		ts3.printMessageToCurrentTab("Anti-move: Now disabled")
 	else
@@ -37,10 +39,51 @@ local function onMenuItemEvent(serverConnectionHandlerID, menuType, menuItemID, 
 	--ts3.printMessageToCurrentTab("massznmtools: onMenuItemEvent: " .. serverConnectionHandlerID .. " " .. menuType .. " " .. menuItemID .. " " .. selectedItemID.." "..moduleMenuItemID)
 	if menuItemID==1 then
 		antimove_toggle(serverConnectionHandlerID)
+	else if menuItemID==2 then
+			ts3.printMessageToCurrentTab("Current server unique ID: " .. getServerId(serverConnectionHandlerID));
+		end
 	end
 end
 
-local function returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier)
+local function inter(grp1,grp2)
+	local x=0;
+	local y=0;
+	local result={};
+
+	for x, name1 in ipairs(grp1) do
+		for y, name2 in ipairs(grp2) do
+			if (name1 == name2) then
+				result[#result+1]=name1;
+			end
+		end
+	end
+	--ts3.printMessageToCurrentTab(#result);
+	return result;
+end
+
+function getServerId(serverConnectionHandlerID)
+	local VirtualServerId, error = ts3.getServerVariableAsString(serverConnectionHandlerID, ts3defs.VirtualServerProperties.VIRTUALSERVER_UNIQUE_IDENTIFIER);
+	if error ~= ts3errors.ERROR_ok then
+		print("Error getting server infos: " .. error)
+		return
+	end
+	return VirtualServerId
+	--ts3.printMessageToCurrentTab(VirtualServerId);
+end
+
+-- This split function is from https://stackoverflow.com/questions/19262761/lua-need-to-split-at-comma#29497100
+local function split(source, delimiters)
+	local elements = {}
+	local pattern = '([^'..delimiters..']+)'
+	string.gsub(source, pattern, function(value) elements[#elements + 1] =     value;  end);
+	return elements
+end
+
+local function getClientServerGroups(serverConnectionHandlerID, clientID)
+	return split(ts3.getClientVariableAsString(serverConnectionHandlerID, clientID, ts3defs.ClientProperties.CLIENT_SERVERGROUPS),",")
+end
+
+local function returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier,moverID)
 	local myClientID, error = ts3.getClientID(serverConnectionHandlerID)
 	if error ~= ts3errors.ERROR_ok then
 		print("Error getting own client ID: " .. error)
@@ -66,6 +109,14 @@ local function returntolastchannel(serverConnectionHandlerID, clientID, oldChann
 				end
 			end
 		end
+		local serverID = getServerId(serverConnectionHandlerID)
+		if servergroup_whitelist[serverID] ~= nil then
+			local compare=inter(getClientServerGroups(serverConnectionHandlerID,moverID),split(servergroup_whitelist[serverID],","))
+			if #compare > 0 then
+				ts3.printMessageToCurrentTab("Anti-move: Whitelisted Server Group")
+				return
+			end
+		end
 		ts3.requestClientMove(serverConnectionHandlerID, clientID, oldChannelID, password)
 	end
 end
@@ -76,11 +127,11 @@ end
 
 local function onClientMoveMovedEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moverID, moverName, moverUniqueIdentifier, moveMessage)
 	--ts3.printMessageToCurrentTab(serverConnectionHandlerID .. " -- " .. clientID .. " -- " .. oldChannelID .. " -- " .. newChannelID .. " -- " .. visibility .. " -- " .. moverID .. " -- " .. moverName .. " -- " .. moverUniqueIdentifier .. " -- " .. moveMessage)
-	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier)
+	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier, moverID)
 end
 
 local function onClientKickFromChannelEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, kickerID, kickerName, kickerUniqueIdentifier, kickMessage)
-	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, kickerUniqueIdentifier)
+	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, kickerUniqueIdentifier, kickerID)
 end
 
 antimove_events= {
