@@ -17,12 +17,11 @@ local servergroup_whitelist = antimove_servergroup_whitelist
 local enabled = antimove_enabled
 
 function antimove_toggle(serverConnectionHandlerID)
+	enabled = not enabled
 	if enabled then
-		enabled=false
-		ts3.printMessageToCurrentTab("Anti-move: Now disabled")
-	else
-		enabled=true
 		ts3.printMessageToCurrentTab("Anti-move: Now enabled")
+	else
+		ts3.printMessageToCurrentTab("Anti-move: Now disabled")
 	end
 end
 
@@ -36,27 +35,26 @@ end
 --  selectedItemID: Channel or Client ID in the case of PLUGIN_MENU_TYPE_CHANNEL and PLUGIN_MENU_TYPE_CLIENT. 0 for PLUGIN_MENU_TYPE_GLOBAL.
 --
 local function onMenuItemEvent(serverConnectionHandlerID, menuType, menuItemID, selectedItemID)
-	--ts3.printMessageToCurrentTab("massznmtools: onMenuItemEvent: " .. serverConnectionHandlerID .. " " .. menuType .. " " .. menuItemID .. " " .. selectedItemID.." "..moduleMenuItemID)
-	if menuItemID==1 then
+	if menuItemID == 1 then
 		antimove_toggle(serverConnectionHandlerID)
-	elseif menuItemID==2 then
+	elseif menuItemID == 2 then
 		ts3.printMessageToCurrentTab("Current server unique ID: " .. getServerId(serverConnectionHandlerID));
 	end
 end
 
 local function inter(grp1,grp2)
-	local x=0;
-	local y=0;
-	local result={};
+	local x = 0;
+	local y = 0;
+	local result = {};
 
 	for x, name1 in ipairs(grp1) do
 		for y, name2 in ipairs(grp2) do
 			if (name1 == name2) then
-				result[#result+1]=name1;
+				result[#result+1] = name1;
 			end
 		end
 	end
-	--ts3.printMessageToCurrentTab(#result);
+	
 	return result;
 end
 
@@ -66,15 +64,15 @@ function getServerId(serverConnectionHandlerID)
 		print("Error getting server infos: " .. error)
 		return
 	end
+	
 	return VirtualServerId
-	--ts3.printMessageToCurrentTab(VirtualServerId);
 end
 
 -- This split function is from https://stackoverflow.com/questions/19262761/lua-need-to-split-at-comma#29497100
 local function split(source, delimiters)
 	local elements = {}
 	local pattern = '([^'..delimiters..']+)'
-	string.gsub(source, pattern, function(value) elements[#elements + 1] =     value;  end);
+	string.gsub(source, pattern, function(value) elements[#elements + 1] = value;  end);
 	return elements
 end
 
@@ -93,24 +91,24 @@ local function returntolastchannel(serverConnectionHandlerID, clientID, oldChann
 		return
 	end
 
-	local password=""
+	local password = ""
 
-	if myClientID==clientID then -- Seems to have some errors when moving in another tab, this make sure to not have them
-		if enabled==false then
+	if myClientID == clientID then -- Seems to have some errors when moving in another tab, this make sure to not have them
+		if not enabled then
 			ts3.printMessageToCurrentTab("Anti-move: Disabled, ignoring")
 			return
 		end
-		if #whitelist>0 then
-			for i=1, #whitelist do
-				if moverUniqueIdentifier == whitelist[i] then
-					ts3.printMessageToCurrentTab("Anti-move: Whitelisted mover/kicker unique identifier")
-					return
-				end
+		
+		for i = 1, #whitelist do
+			if moverUniqueIdentifier == whitelist[i] then
+				ts3.printMessageToCurrentTab("Anti-move: Whitelisted mover/kicker unique identifier")
+				return
 			end
 		end
+		
 		local serverID = getServerId(serverConnectionHandlerID)
 		if servergroup_whitelist[serverID] ~= nil then
-			local compare=inter(getClientServerGroups(serverConnectionHandlerID,moverID),split(servergroup_whitelist[serverID],","))
+			local compare = inter(getClientServerGroups(serverConnectionHandlerID,moverID),split(servergroup_whitelist[serverID],","))
 			if #compare > 0 then
 				ts3.printMessageToCurrentTab("Anti-move: Whitelisted Server Group")
 				return
@@ -120,12 +118,7 @@ local function returntolastchannel(serverConnectionHandlerID, clientID, oldChann
 	end
 end
 
---local function onClientMoveEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moveMessage)
---	ts3.printMessageToCurrentTab(serverConnectionHandlerID.." -- "..clientID.." -- "..oldChannelID.." -- "..newChannelID.." -- "..visibility.." -- "..MoveMessage)
---end
-
 local function onClientMoveMovedEvent(serverConnectionHandlerID, clientID, oldChannelID, newChannelID, visibility, moverID, moverName, moverUniqueIdentifier, moveMessage)
-	--ts3.printMessageToCurrentTab(serverConnectionHandlerID .. " -- " .. clientID .. " -- " .. oldChannelID .. " -- " .. newChannelID .. " -- " .. visibility .. " -- " .. moverID .. " -- " .. moverName .. " -- " .. moverUniqueIdentifier .. " -- " .. moveMessage)
 	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, moverUniqueIdentifier, moverID)
 end
 
@@ -133,11 +126,10 @@ local function onClientKickFromChannelEvent(serverConnectionHandlerID, clientID,
 	returntolastchannel(serverConnectionHandlerID, clientID, oldChannelID, kickerUniqueIdentifier, kickerID)
 end
 
-antimove_events= {
+antimove_events = {
 	MenuIDs = MenuIDs,
 	moduleMenuItemID = moduleMenuItemID,
-	["onMenuItemEvent"] = onMenuItemEvent,
-	--["onClientMoveEvent"] = onClientMoveEvent,
-	["onClientMoveMovedEvent"] = onClientMoveMovedEvent,
-	["onClientKickFromChannelEvent"] = onClientKickFromChannelEvent
+	onMenuItemEvent = onMenuItemEvent,
+	onClientMoveMovedEvent = onClientMoveMovedEvent,
+	onClientKickFromChannelEvent = onClientKickFromChannelEvent
 }
