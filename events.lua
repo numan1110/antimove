@@ -39,9 +39,8 @@ local function onMenuItemEvent(serverConnectionHandlerID, menuType, menuItemID, 
 	--ts3.printMessageToCurrentTab("massznmtools: onMenuItemEvent: " .. serverConnectionHandlerID .. " " .. menuType .. " " .. menuItemID .. " " .. selectedItemID.." "..moduleMenuItemID)
 	if menuItemID==1 then
 		antimove_toggle(serverConnectionHandlerID)
-	else if menuItemID==2 then
-			ts3.printMessageToCurrentTab("Current server unique ID: " .. getServerId(serverConnectionHandlerID));
-		end
+	elseif menuItemID==2 then
+		ts3.printMessageToCurrentTab("Current server unique ID: " .. getServerId(serverConnectionHandlerID));
 	end
 end
 
