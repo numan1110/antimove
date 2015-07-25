@@ -11,6 +11,10 @@ git clone https://github.com/fullinterest/antimove.git
 ```
 - You can also use the release version, a version in the ts3 plugin format, see on teamspeak 3 if there's no application assigned to the ts3_plugin file.
 
+# Update
+
+Don't forget to check if new settings have been added in the settings.lua as it's in the .gitignore and it might not work well if there's missing setting(s)
+
 # Settings
 
 The settings are included in the settings.lua file.
