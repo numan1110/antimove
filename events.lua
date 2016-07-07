@@ -99,6 +99,11 @@ local function returntolastchannel(serverConnectionHandlerID, clientID, oldChann
 			return
 		end
 		
+		if moverUniqueIdentifier == "" then
+			ts3.printMessageToCurrentTab("Anti-move: Mover unique identifier of mover is empty (probably server)")
+			return
+		end
+		
 		for i = 1, #whitelist do
 			if moverUniqueIdentifier == whitelist[i] then
 				ts3.printMessageToCurrentTab("Anti-move: Whitelisted mover/kicker unique identifier")
